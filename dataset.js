@@ -31,66 +31,66 @@ Filter.prototype.compare = function (item) {
 }
 
 Filter.prototype.$gt = function ({name, item}) {
-	let l = Object.keys(this._filter[name])
-	let result = l.filter(key => {
-		let value = item[key]
-		let n = this._filter[name][key]
-		if (value > n) {
-			return true
-		}
-	})
-	return result.length === l.length
+  let l = Object.keys(this._filter[name])
+  let result = l.filter(key => {
+    let value = item[key]
+    let n = this._filter[name][key]
+    if (value > n) {
+      return true
+    }
+  })
+  return result.length === l.length
 }
 
 Filter.prototype.$lt = function ({name, item}) {
-	let l = Object.keys(this._filter[name])
-	let result = l.filter(key => {
-		let value = item[key]
-		let n = this._filter[name][key]
-		if (value < n) {
-			return true
-		}
-	})
-	return result.length === l.length
+  let l = Object.keys(this._filter[name])
+  let result = l.filter(key => {
+    let value = item[key]
+    let n = this._filter[name][key]
+    if (value < n) {
+      return true
+    }
+  })
+  return result.length === l.length
 }
 
 Filter.prototype.$eq = function ({name, item}) {
-	let l = Object.keys(this._filter[name])
-	let result = l.filter(key => {
-		let value = item[key]
-		let n = this._filter[name][key]
-		if (Array.isArray(n)) {
-			return n.indexOf(value) >= 0
-		} else {
-			if (value === n) {
-				return true
-			}
-		}
-	})
-	return result.length === l.length
+  let l = Object.keys(this._filter[name])
+  let result = l.filter(key => {
+    let value = item[key]
+    let n = this._filter[name][key]
+    if (Array.isArray(n)) {
+      return n.indexOf(value) >= 0
+    } else {
+      if (value === n) {
+        return true
+      }
+    }
+  })
+  return result.length === l.length
 }
 
 Filter.prototype.$neq = function ({name, item}) {
-	let l = Object.keys(this._filter[name])
-	let result = l.filter(key => {
-		let value = item[key]
-		let n = this._filter[name][key]
-		if (Array.isArray(n)) {
-			return n.indexOf(value) < 0
-		} else {
-			if (value !== n) {
-				return true
-			}
-		}
-	})
-	return result.length === l.length
+  let l = Object.keys(this._filter[name])
+  let result = l.filter(key => {
+    let value = item[key]
+    let n = this._filter[name][key]
+    if (Array.isArray(n)) {
+      return n.indexOf(value) < 0
+    } else {
+      if (value !== n) {
+        return true
+      }
+    }
+  })
+  return result.length === l.length
 }
 
 Filter.prototype.sort = function (e) {
-	Object.keys(e).map(name => {
-		this._sort[name] = e[name]
-	})
-	return this
+  Object.keys(e).map(name => {
+    this._sort[name] = e[name]
+  })
+  return this
 }
 
 Filter.prototype.exec = function (fn) {
@@ -105,7 +105,6 @@ Filter.prototype.exec = function (fn) {
   })
 }
 
-
 /*
 $gt: {key: 5}
 $lt: {key: 5}
@@ -118,61 +117,59 @@ Filter.prototype.find = function (filter) {
 }
 
 function Sort ({arr, rule}) {
-	this.arr = arr
-	this.rule = rule
-	return this.launch()
+  this.arr = arr
+  this.rule = rule
+  return this.launch()
 }
 Sort.prototype.launch = function () {
-	let {name, order} = this.getRule()
-	if (name === null) return this.arr
-    return this.arr.sort((a, b) => {
-		return this.closest(a, b, name, order)
-	})
+  let {name, order} = this.getRule()
+  if (name === null) return this.arr
+  return this.arr.sort((a, b) => {
+    return this.closest(a, b, name, order)
+  })
 }
 Sort.prototype.getRule = function (n) {
-	let maps = Object.keys(this.rule)
-	if (maps.length === 0) {
-		return {
-			name : null
-		}
-	}
-	let index = maps.indexOf(n)
-	if (index >= 0 && n !== undefined) {
-		if (index + 1 < maps.length) {
-			let name = maps[index + 1]
-			let order = this.rule[name]
-			return {
-				name,
-				order
-			}
-		} else {
-			return {
-				name: null
-			}
-		}
-	} else {
-		let name = maps.shift()
-		let order = this.rule[name]
-		return {
-			name,
-			order
-		}
-	}
+  let maps = Object.keys(this.rule)
+  if (maps.length === 0) {
+    return {
+      name: null
+    }
+  }
+  let index = maps.indexOf(n)
+  if (index >= 0 && n !== undefined) {
+    if (index + 1 < maps.length) {
+      let name = maps[index + 1]
+      let order = this.rule[name]
+      return {
+        name,
+        order
+      }
+    } else {
+      return {
+        name: null
+      }
+    }
+  } else {
+    let name = maps.shift()
+    let order = this.rule[name]
+    return {
+      name,
+      order
+    }
+  }
 }
 Sort.prototype.closest = function (a, b, key, o) {
-	if (a[key] === b[key]) {
-		let {name, order} = this.getRule(key)
-		if (name === null) {
-			return o === 'asc' ? a[key] - b[key] : b[key] - a[key]
-		} else {
-			return this.closest(a, b, name, order)
-		}
-	} else {
-		return o === 'asc' ? a[key] - b[key] : b[key] - a[key]
-	}
+  if (a[key] === b[key]) {
+    let {name, order} = this.getRule(key)
+    if (name === null) {
+      return o === 'asc' ? a[key] - b[key] : b[key] - a[key]
+    } else {
+      return this.closest(a, b, name, order)
+    }
+  } else {
+    return o === 'asc' ? a[key] - b[key] : b[key] - a[key]
+  }
 }
-
-
 
 Collection.prototype.find = function (filter) {
   console.time('time')
@@ -189,20 +186,20 @@ Collection.prototype.insert = function (datas) {
   } else {
     data.push(datas)
   }
-  Array.isArray(this.props._datas[this.name]) ? this.props._datas[this.name] = this.props._datas[this.name].concat.apply([], data): this.props._datas[this.name] = data
+  Array.isArray(this.props._datas[this.name]) ? this.props._datas[this.name] = this.props._datas[this.name].concat.apply([], data) : this.props._datas[this.name] = data
   return this
 }
 
 DataSet.prototype.collection = function (name) {
- this[name] = new Collection(this, name)
+  this[name] = new Collection(this, name)
 }
 
 var ds = new DataSet()
 ds.collection('pp')
 var arr = []
-for (let i = 0 ; i < 200000; i++){
-	let a = parseInt(Math.random() * 100)
-	let b = a % 2 === 0
-	arr.push({id: i, index: a, status: b})
+for (let i = 0; i < 200000; i++) {
+  let a = parseInt(Math.random() * 100)
+  let b = a % 2 === 0
+  arr.push({id: i, index: a, status: b})
 }
 ds.pp.insert(arr)
