@@ -86,8 +86,10 @@ Filter.prototype.$neq = function ({name, item}) {
 	return result.length === l.length
 }
 
-Filter.prototype.sort = function ({key, order = 'asc'}) {
-	this._sort[key] = order
+Filter.prototype.sort = function (e) {
+	Object.keys(e).map(name => {
+		this._sort[name] = e[name]
+	})
 	return this
 }
 
@@ -100,9 +102,9 @@ Filter.prototype.exec = function (fn) {
     Object.keys(this._sort).map(key => {
 		arr.sort((a, b) => {
 			if (this._sort[key] === 'asc') {
-				return a[key] < b[key]
+				return a[key] - b[key]
 			} else {
-				return a[key] > b[key]
+				return b[key] - a[key]
 			}
 		})
     })
@@ -155,5 +157,3 @@ for (let i = 0 ; i < 200000; i++){
 	arr.push({id: i, index: a, status: b})
 }
 ds.pp.insert(arr)
-
-ds.pp.find({status: true}).find({$gt: {index: 8000},$lt: {id: 100}, $neq: {id: [8 ,88, 93, 90]}}).exec().then((e) => {console.log(e)})
