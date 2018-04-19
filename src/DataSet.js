@@ -203,3 +203,7 @@ Collection.prototype.insert = function (datas) {
 DataSet.prototype.collection = function (name) {
   this[name] = new Collection(this, name)
 }
+
+module.exports = {
+  DataSet
+}
