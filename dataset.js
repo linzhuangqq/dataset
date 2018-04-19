@@ -99,20 +99,12 @@ Filter.prototype.exec = function (fn) {
       return this.compare(it)
     })
     if (typeof fn === 'function') arr = fn(arr)
-    Object.keys(this._sort).map(key => {
-		arr.sort((a, b) => {
-			if (this._sort[key] === 'asc') {
-				return a[key] - b[key]
-			} else {
-				return b[key] - a[key]
-			}
-		})
-    })
-    
+    arr = new Sort({arr: arr, rule: this._sort})
     console.timeEnd('time')
     return resolve(arr)
   })
 }
+
 
 /*
 $gt: {key: 5}
@@ -124,6 +116,63 @@ Filter.prototype.find = function (filter) {
   this.add(filter)
   return this
 }
+
+function Sort ({arr, rule}) {
+	this.arr = arr
+	this.rule = rule
+	return this.launch()
+}
+Sort.prototype.launch = function () {
+	let {name, order} = this.getRule()
+	if (name === null) return this.arr
+    return this.arr.sort((a, b) => {
+		return this.closest(a, b, name, order)
+	})
+}
+Sort.prototype.getRule = function (n) {
+	let maps = Object.keys(this.rule)
+	if (maps.length === 0) {
+		return {
+			name : null
+		}
+	}
+	let index = maps.indexOf(n)
+	if (index >= 0 && n !== undefined) {
+		if (index + 1 < maps.length) {
+			let name = maps[index + 1]
+			let order = this.rule[name]
+			return {
+				name,
+				order
+			}
+		} else {
+			return {
+				name: null
+			}
+		}
+	} else {
+		let name = maps.shift()
+		let order = this.rule[name]
+		return {
+			name,
+			order
+		}
+	}
+}
+Sort.prototype.closest = function (a, b, key, o) {
+	if (a[key] === b[key]) {
+		let {name, order} = this.getRule(key)
+		if (name === null) {
+			return o === 'asc' ? a[key] - b[key] : b[key] - a[key]
+		} else {
+			return this.closest(a, b, name, order)
+		}
+	} else {
+		return o === 'asc' ? a[key] - b[key] : b[key] - a[key]
+	}
+}
+
+
 
 Collection.prototype.find = function (filter) {
   console.time('time')
@@ -152,7 +201,7 @@ var ds = new DataSet()
 ds.collection('pp')
 var arr = []
 for (let i = 0 ; i < 200000; i++){
-	let a = parseInt(Math.random() * 10000)
+	let a = parseInt(Math.random() * 100)
 	let b = a % 2 === 0
 	arr.push({id: i, index: a, status: b})
 }
