@@ -159,15 +159,25 @@ Sort.prototype.getRule = function (n) {
   }
 }
 Sort.prototype.closest = function (a, b, key, o) {
-  if (a[key] === b[key]) {
+  let {av, bv} = this.format(a, b, key)
+  if (av === bv) {
     let {name, order} = this.getRule(key)
     if (name === null) {
-      return o === 'asc' ? a[key] - b[key] : b[key] - a[key]
+      return this.compare(av, bv, o)
     } else {
       return this.closest(a, b, name, order)
     }
   } else {
-    return o === 'asc' ? a[key] - b[key] : b[key] - a[key]
+    return this.compare(av, bv, o)
+  }
+}
+Sort.prototype.compare = function (av, bv, o) {
+  return o === 'asc' ? av - bv : bv - av
+}
+Sort.prototype.format = function (a, b, key) {
+  return {
+    av: a[key],
+    bv: b[key]
   }
 }
 
