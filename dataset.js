@@ -203,13 +203,3 @@ Collection.prototype.insert = function (datas) {
 DataSet.prototype.collection = function (name) {
   this[name] = new Collection(this, name)
 }
-
-var ds = new DataSet()
-ds.collection('pp')
-var arr = []
-for (let i = 0; i < 200000; i++) {
-  let a = parseInt(Math.random() * 100)
-  let b = a % 2 === 0
-  arr.push({id: i, index: a, status: b})
-}
-ds.pp.insert(arr)
